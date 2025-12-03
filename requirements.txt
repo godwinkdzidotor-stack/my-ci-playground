@@ -1,4 +1,4 @@
-Flask==0.12.3             # VERY old, multiple known CVEs (High)
+Flask==2.3.2             # VERY old, multiple known CVEs (High)
 Werkzeug==3.0.3          # Multiple medium/high vulns
 urllib3==2.0.7           # HIGH, CRITICAL CVEs known
 itsdangerous==0.24        # Very old, known issues
