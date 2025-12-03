@@ -13,6 +13,10 @@ on: # on is trhe trigger
       - develop
       - staging
 
+env:
+  APP_NAME: "myapp"
+  REGION: "us-east-1"
+
 
 jobs: 
   build-and-test:
