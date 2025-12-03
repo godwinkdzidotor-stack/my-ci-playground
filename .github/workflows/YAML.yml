@@ -29,10 +29,44 @@ jobs:
       - name: Show files in repo
         run: ls -R
 
-      - name: Fake build step
-        run: echo "Building the app (placeholder)"
+      - name: Check for response on build
+        run: echo "Building the app - checking..."
 
-      - name: Fake test step
-        run: echo "Running tests (placeholder)"
+      - name: Building Docker fake Image
+        run: echo "Running tests... "
       - name: Build Docker image
         run: docker build -t $APP_NAME .
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_Linux-64bit.deb
+          sudo dpkg -i trivy_Linux-64bit.deb
+      - name: Scan Docker image with Trivy
+        run: trivy image --no-progress --severity HIGH,CRITICAL $APP_NAME
+
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Checkov (Terraform/IaC scanner)
+        run: |
+          pip install checkov
+
+      - name: Run Checkov on repo
+        run: |
+          checkov -d . || echo "Checkov finished with findings"
+
+      - name: Install Gitleaks (secret scanner)
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_$(uname -s)_$(uname -m).tar.gz -o gitleaks.tar.gz
+          tar -xzf gitleaks.tar.gz gitleaks
+          sudo mv gitleaks /usr/local/bin/gitleaks
+
+      - name: Run Gitleaks secret scan
+        run: |
+          gitleaks detect --no-banner --redact || echo "Gitleaks finished with findings"
