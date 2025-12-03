@@ -1,0 +1,32 @@
+name: my-first-pipeline
+
+# Define where the pipeline should run
+on: # on is trhe trigger
+  push: # run pipeline when someone pushes code
+    branches: # pipeline only run on these branches
+      - main
+      - develop
+      - staging
+  pull_request:
+    branches:
+      - main
+      - develop
+      - staging
+
+
+jobs: 
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show files in repo
+        run: ls -R
+
+      - name: Fake build step
+        run: echo "Building the app (placeholder)"
+
+      - name: Fake test step
+        run: echo "Running tests (placeholder)"
