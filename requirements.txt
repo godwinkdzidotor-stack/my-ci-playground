@@ -1,6 +1,14 @@
-Flask==2.3.2             # VERY old, multiple known CVEs (High)
-Werkzeug==3.0.3          # Multiple medium/high vulns
-urllib3==2.0.7           # HIGH, CRITICAL CVEs known
-itsdangerous==0.24        # Very old, known issues
-click==6.7                 # Old version
-pytest==3.3.0             # Outdated, contains vulnerable deps
+# Flask==2.3.2             # VERY old, multiple known CVEs (High)
+# Werkzeug==3.0.3          # Multiple medium/high vulns
+# urllib3==2.0.7           # HIGH, CRITICAL CVEs known
+# itsdangerous==0.24        # Very old, known issues
+# click==6.7                 # Old version
+# pytest==3.3.0             # Outdated, contains vulnerable deps
+
+
+Flask==3.0.3
+Werkzeug==3.0.3
+reportlab==4.0.9
+click==8.1.7
+itsdangerous==2.1.2
+pytest
