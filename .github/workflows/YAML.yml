@@ -61,13 +61,8 @@ jobs:
         run: |
           checkov -d . || echo "Checkov finished with findings"
 
-      - name: Install Gitleaks (secret scanner)
-        run: |
-          curl -sSfL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz -o gitleaks.tar.gz
-          tar -xzf gitleaks.tar.gz gitleaks
-          sudo mv gitleaks /usr/local/bin/gitleaks
-
-
       - name: Run Gitleaks secret scan
-        run: |
-          gitleaks detect --no-banner --redact || echo "Gitleaks finished with findings"
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: detect --source . --no-banner --redact
+        continue-on-error: true
