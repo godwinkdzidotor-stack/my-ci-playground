@@ -97,6 +97,7 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+        
   tfsec:
     name: Run tfsec sarif report
     runs-on: ubuntu-latest
@@ -119,6 +120,7 @@ jobs:
         with:
           # Path to SARIF file relative to the root of the repository
           sarif_file: tfsec.sarif
+          
   bandit:
     permissions:
       contents: read # for actions/checkout to fetch code
@@ -133,3 +135,31 @@ jobs:
         with: # optional arguments
           # exit with 0, even with results found
           exit_zero: true # optional, default is DEFAULT
+
+  zscaler-iac-scan:
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+    runs-on: ubuntu-latest
+    steps:
+      - name : Code Checkout
+        uses: actions/checkout@v4
+      - name : Zscaler IAC Scan
+        uses : ZscalerCWP/Zscaler-IaC-Action@8d2afb33b10b4bd50e2dc2c932b37c6e70ac1087
+        id : zscaler-iac-scan
+        with:
+          client_id : ${{ secrets.ZSCANNER_CLIENT_ID }}
+          client_secret : ${{ secrets.ZSCANNER_CLIENT_SECRET }}
+          #This is the user region specified during the onboarding process within the ZPC Admin Portal.
+          region : 'US'
+          iac_dir : #Enter the IaC directory path from root.
+          iac_file : #Enter the IaC file path from root.
+          output_format : #(Optional) By default, the output is provided in a human readable format. However, if you require a different format, you can specify it here.
+          #To fail the build based on policy violations identified in the IaC templates, set the input value (fail_build) to true.
+          fail_build : #Enter true/false
+      #Ensure that the following step is included in order to post the scan results under the code scanning alerts section within the repository.
+      - name: Upload SARIF file
+        if: ${{ success() || failure() && (steps.zscaler-iac-scan.outputs.sarif_file_path != '') }}
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.zscaler-iac-scan.sarif_file_path }}
